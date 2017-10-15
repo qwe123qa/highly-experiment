@@ -19,3 +19,4 @@ source
 .cache
 .sass-cache
 public
+dist

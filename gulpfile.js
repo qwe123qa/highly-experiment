@@ -14,6 +14,7 @@ var babelify = require('babelify');
 var tap = require('gulp-tap');
 var buffer = require('gulp-buffer');
 var ext = require('gulp-ext');
+var vueify = require('gulp-vueify');
 // var webpack = require('webpack-stream');
 
 gulp.task('browser-sync', function() {
@@ -40,24 +41,30 @@ gulp.task('browser-sync', function() {
 //         .pipe(webpack( require('./webpack.config.js') ));
 // });
 
-gulp.task('react', function() {
-    return gulp.src('components/*.jsx', {
-            read: false
-        })
-        .pipe(tap(function(file) {
-            file.contents = new_browserify(file.path, {
-                debug: true
-            })
-            .transform('babelify', {
-                presets: ['es2015', 'react']
-            })
-            // .plugin('css-modulesify')
-            .bundle()
-        }))
-        .pipe(buffer())
-        .pipe(ext.replace('js'))
-        .pipe(gulp.dest('dist'))
-        .pipe(browserSync.stream());
+// gulp.task('react', function() {
+//     return gulp.src('components/*.jsx', {
+//             read: false
+//         })
+//         .pipe(tap(function(file) {
+//             file.contents = new_browserify(file.path, {
+//                 debug: true
+//             })
+//             .transform('babelify', {
+//                 presets: ['es2015', 'react']
+//             })
+//             // .plugin('css-modulesify')
+//             .bundle()
+//         }))
+//         .pipe(buffer())
+//         .pipe(ext.replace('js'))
+//         .pipe(gulp.dest('dist'))
+//         .pipe(browserSync.stream());
+// });
+
+gulp.task('vue', function() {
+    return gulp.src('vue/*.vue')
+        .pipe(vueify())
+        .pipe(gulp.dest('dist'));
 });
 
 gulp.task('babel', function() {
