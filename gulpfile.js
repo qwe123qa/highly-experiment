@@ -9,13 +9,7 @@ var changed = require('gulp-changed');
 var svgSprite = require('gulp-svg-sprite');
 var babel = require("gulp-babel");
 var browserify = require("gulp-browserify");
-var new_browserify = require("browserify");
-var babelify = require('babelify');
-var tap = require('gulp-tap');
-var buffer = require('gulp-buffer');
-var ext = require('gulp-ext');
-var vueify = require('gulp-vueify');
-// var webpack = require('webpack-stream');
+var webpack = require('webpack-stream');
 
 gulp.task('browser-sync', function() {
     browserSync.init({
@@ -25,22 +19,18 @@ gulp.task('browser-sync', function() {
 
     gulp.watch('sass/*.scss', ['sass']);
 
-    gulp.watch('components/*.jsx', ['react']);
-
     gulp.watch('js/*.js', ['babel']);
 
-    gulp.watch('pug/*.pug', ['pug-rebuild']);
-
     gulp.watch('svg/*.svg', ['svg-rebuild']);
+
+    // gulp.watch(['vue/components/*.vue', 'vue/*.js'], ['vue']);
+
+    // gulp.watch('pug/*.pug', ['pug-rebuild']);
 
     browserSync.watch(['*.html', '*.php']).on('change', browserSync.reload);
 });
 
-// gulp.task('webpack', function() {
-//     return gulp.src('components/*.jsx')
-//         .pipe(webpack( require('./webpack.config.js') ));
-// });
-
+// FIXME: 待修改
 // gulp.task('react', function() {
 //     return gulp.src('components/*.jsx', {
 //             read: false
@@ -62,9 +52,10 @@ gulp.task('browser-sync', function() {
 // });
 
 gulp.task('vue', function() {
-    return gulp.src('vue/*.vue')
-        .pipe(vueify())
-        .pipe(gulp.dest('dist'));
+    return gulp.src('vue/*.js')
+        .pipe(webpack(require('./webpack.config.js') ))
+        .pipe(gulp.dest('dist'))
+        .pipe(browserSync.stream());
 });
 
 gulp.task('babel', function() {
@@ -79,7 +70,9 @@ gulp.task('babel', function() {
 
 gulp.task('pug', function buildHTML() {
     return gulp.src('pug/*.pug')
-        .pipe(pug())
+        .pipe(pug({
+            // pretty: true
+        }))
         .pipe(gulp.dest('./'))
 });
 
@@ -163,7 +156,10 @@ gulp.task('svg-rebuild', ['svg'], function() {
 });
 
 // normal
-gulp.task('default', ['svg', 'sass', 'babel', 'pug', 'browser-sync']);
+gulp.task('default', ['svg', 'sass', 'babel', 'browser-sync']);
+
+// vue
+// gulp.task('default', ['svg', 'sass', 'babel', 'vue', 'pug', 'browser-sync']);
 
 // react
-// gulp.task('default', ['svg', 'sass', 'react', 'babel', 'pug', 'browser-sync']);
+// gulp.task('default', ['svg', 'sass', 'babel', 'react', 'pug', 'browser-sync']);
